@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeetSheetGenerator", "MeetSheetGenerator\MeetSheetGenerator.csproj", "{66146F5B-01BF-44A7-8D33-6346F5EBBAED}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{66146F5B-01BF-44A7-8D33-6346F5EBBAED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66146F5B-01BF-44A7-8D33-6346F5EBBAED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66146F5B-01BF-44A7-8D33-6346F5EBBAED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66146F5B-01BF-44A7-8D33-6346F5EBBAED}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

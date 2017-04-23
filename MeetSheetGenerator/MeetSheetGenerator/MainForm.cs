@@ -14,6 +14,8 @@ namespace MeetSheetGenerator
 {
     public partial class MainForm : Form
     {
+        private List<Event> events; //Keeps track of all of the events in for the meet sheet.
+        private List<string> schools; //Keeps track of all the schools competing.
         public MainForm()
         {
             InitializeComponent();
@@ -58,8 +60,8 @@ namespace MeetSheetGenerator
                                               //Console.WriteLine(mediabox.Height); //Print the page height
                                               //Console.WriteLine(mediabox.Width); //Print the page width.
 
-            int intPageNum = reader.NumberOfPages;
-            //Location forLeft = new Location()
+            int intPageNum = reader.NumberOfPages; //Get the number of pages this document has.
+            Event currentEvent = null; //The current event that we are on.
             for (int currentPage = 1; currentPage <= intPageNum; currentPage++)
             {
                 for (int i = 0; i <= 1; i++)
@@ -84,16 +86,50 @@ namespace MeetSheetGenerator
 
                     for (int j = 0; j < line.Length; j++)
                     {
-                        if (line[j].Contains("Marquette")) //I only care about Marquette teams
+                        //First off, are we on an event?
+                        string currentLine = line[j];
+                        int position;
+                        if (currentLine.Substring(0,5).Equals("Event"))
+                        {
+                            
+                            
+                            //We need to get to the end of event # in the line because it holds the event name.
+                            currentLine = currentLine.Substring(currentLine.IndexOf("   ") + 3);
+                            currentLine = currentLine.Substring(0,currentLine.LastIndexOf("("));
+                            currentLine = currentLine.Trim(' ');
+                            //currentLine = currentLine.Substring(currentLine.IndexOf(' '));
+                            //Console.WriteLine(currentLine);
+                            //bool isNumeric = int.TryParse("123", out postion);
+                            //What is left of currentLine is the event title.
+                            currentEvent = new Event(currentLine);
+                        }
+                        else if(int.TryParse(currentLine.Substring(0,1), out position))
+                        {
+                            //Console.WriteLine(currentLine);
+                            string[] lineAtHand = currentLine.Split(' ');
+                            string lastName = lineAtHand[1].Trim(',');
+                            string firstName = lineAtHand[2];
+                            string school = lineAtHand[4];
+                            Athlete person = new Athlete(firstName, lastName, school); //Create an athlete
+                            currentEvent.addAthlete(person); //Add the athlete to the event.
+                            //Console.WriteLine(lastName);
+                        }
+                            //Event  3   (G) T.J. (28)
+                        //Console.WriteLine(line[j]); //Write it out into a text file.
+                        /*if (line[j].Contains("Marquette")) //I only care about Marquette teams
                         {
                             Console.WriteLine(line[j]); //Write it out into a text file.
                             //TRXC Timing, LLC. - Contractor License
-                        }
+                        }*/
                     }
-
                 }
+                return; //Let's just keep this to one page for now.
 
             }
+            /*foreach (Event currentEvents in events)
+            {
+                Console.WriteLine(currentEvents.getName());
+            }*/
         }
         
         private void btnBrowse_Click(object sender, EventArgs e)
@@ -122,6 +158,12 @@ namespace MeetSheetGenerator
                 return;
             }
 
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            events = new List<Event>();
+            schools = new List<string>();
         }
     }
 }

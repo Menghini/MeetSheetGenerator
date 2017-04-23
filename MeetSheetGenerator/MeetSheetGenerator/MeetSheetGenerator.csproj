@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Athlete.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>

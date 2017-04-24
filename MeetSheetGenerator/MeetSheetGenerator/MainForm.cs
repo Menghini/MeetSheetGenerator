@@ -17,6 +17,7 @@ namespace MeetSheetGenerator
     {
         private List<Event> events; //Keeps track of all of the events in for the meet sheet.
         private List<string> schools; //Keeps track of all the schools competing.
+        private int nameFormat = 0;
         public MainForm()
         {
             InitializeComponent();
@@ -270,11 +271,11 @@ namespace MeetSheetGenerator
                     Console.WriteLine(currentAthlete.getName(0));*/
                     if(index%4==0 && index!=0)
                     {
-                        tempPrint += "\n\t\t___ " + (String)currentAthlete.getName(0);
+                        tempPrint += "\n\t\t___ " + (String)currentAthlete.getName(nameFormat);
                     }
                     else
                     {
-                        tempPrint += "\t___ " + (String)currentAthlete.getName(0);
+                        tempPrint += "\t___ " + (String)currentAthlete.getName(nameFormat);
                     }
                     index++;
                 }
@@ -304,6 +305,26 @@ namespace MeetSheetGenerator
 
 
 
+        }
+
+        private void radioButtonFirstLast_CheckedChanged(object sender, EventArgs e)
+        {
+            nameFormat = 0;
+        }
+
+        private void radioButtonLastFirst_CheckedChanged(object sender, EventArgs e)
+        {
+            nameFormat = 1;
+        }
+
+        private void radioButtonFirstInitalLast_CheckedChanged(object sender, EventArgs e)
+        {
+            nameFormat = 2;
+        }
+
+        private void radioButtonLastInitalFirst_CheckedChanged(object sender, EventArgs e)
+        {
+            nameFormat = 3;
         }
     }
 }

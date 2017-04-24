@@ -26,6 +26,18 @@ namespace MeetSheetGenerator
             {
                 return firstName + " " + lastName;
             }
+            else if (setting == 1)
+            {
+                return lastName + " " + firstName;
+            }
+            else if (setting == 2)
+            {
+                return firstName.Substring(0,1) + " " + lastName;
+            }
+            else if (setting == 3)
+            {
+                return lastName.Substring(0, 1) + " " + firstName;
+            }
             return null;
         }
         public string getSchool()

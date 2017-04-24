@@ -237,6 +237,17 @@ namespace MeetSheetGenerator
             }
         }
         /// <summary>
+        /// Sets the format for tabs into field events
+        /// </summary>
+        private void setFormatField(Word.Paragraph oPara1)
+        {
+            oPara1.TabStops.ClearAll();
+            float tabIndex = (float)0 * 72; //Add takes a "point". 1 inch = 72 points
+            oPara1.TabStops.Add(tabIndex, 0, 0);
+            tabIndex += (float)1.5 * 72;
+            oPara1.TabStops.Add(tabIndex, 0, 0);
+        }
+        /// <summary>
         /// Sets the format for tabs into a individual athelete format
         /// </summary>
         private void setFormatIndividual(Word.Paragraph oPara1)
@@ -285,6 +296,10 @@ namespace MeetSheetGenerator
 
             foreach (Event currentEvent in listBoxEvents.SelectedItems)
             {
+                if(currentEvent.getType().Equals("Field"))
+                {
+                    continue; //We don't need to do anything this time around. Just skip. Field events will happen later in the code.
+                }
                 Console.WriteLine(currentEvent.getName());
                 //String tempPrint = currentEvent.getName();
                 oPara1.Range.Font.Bold = 1;
@@ -320,12 +335,12 @@ namespace MeetSheetGenerator
                     if(index==0)
                     {
                         //If not, add a NO ENTRY
-                        tempPrint += "\t___ NO ENTRY\t___";
+                        tempPrint += "\t___ NO ENTRY";
                     }
                     //Should we include an extra slot in the event?
                     if (extraSlot)
                     {
-                        if (index % 4 != 0)
+                        if (index % 4 != 0 || index==0)
                         {
                             tempPrint += "\t___ ";
                         }
@@ -350,6 +365,73 @@ namespace MeetSheetGenerator
                     oPara1.Range.InsertParagraphAfter(); //Just an extra line :)
                 }
             }
+            oDoc.Words.Last.InsertBreak(Word.WdBreakType.wdSectionBreakContinuous);
+            //oPara1.Range.Text = "test";
+            //Now let's print the field events.
+            //Is this a track event (as opposed to a relay or field event?
+
+            foreach (Event currentEvent in listBoxEvents.SelectedItems)
+            {
+                if (currentEvent.getType().Equals("Field"))
+                {
+                    Console.WriteLine(currentEvent.getName());
+                    //String tempPrint = currentEvent.getName();
+                    oPara1.Range.Font.Bold = 1;
+                    oPara1.Range.Font.Underline = Microsoft.Office.Interop.Word.WdUnderline.wdUnderlineSingle;
+                    oPara1.Range.Text = currentEvent.getName();
+                    oPara1.Range.InsertParagraphAfter();
+                    oPara1.Range.Font.Bold = 0;
+                    oPara1.Range.Font.Underline = 0;
+                    String tempPrint = "";
+                    setFormatField(oPara1); //Set the tab formats to be for field events.
+                    int index = 0;
+                    foreach (Athlete currentAthlete in currentEvent.getAthletes((String)comboBoxSchools.SelectedItem))
+                    {
+                        /*oPara1.Range.Text += currentAthlete.getName(0);
+                        Console.WriteLine(currentAthlete.getName(0));*/
+                        if (index % 2 == 1)
+                        {
+                            tempPrint += "\t___ " + (String)currentAthlete.getName(nameFormat);
+                        }
+                        else if(index == 0)
+                        {
+                            tempPrint += "___ " + (String)currentAthlete.getName(nameFormat);
+                        }
+                        else if(index %2 == 0)
+                        {
+                            tempPrint += "\n___ " + (String)currentAthlete.getName(nameFormat);
+                        }
+                        index++;
+                    }
+                    //Where they any people in this event in the first place?
+                    if (index == 0)
+                    {
+                        //If not, add a NO ENTRY
+                        tempPrint += "\t___ NO ENTRY";
+                    }
+                    //Should we include an extra slot in the event?
+                    //TODO: Fix this... doesn't work for field events.
+                    if (extraSlot)
+                    {
+                        if (index % 4 != 0 || index == 0)
+                        {
+                            tempPrint += "\t___ ";
+                        }
+                        else
+                        {
+                            tempPrint += "\n\t___ ";
+                        }
+                    }
+
+                    oPara1.Range.Text = tempPrint;
+                    oPara1.Range.InsertParagraphAfter();
+                    oPara1.Range.Text = "";
+                    oPara1.Range.InsertParagraphAfter(); //Just an extra line :)
+
+                }
+            }
+            oDoc.Sections[2].PageSetup.TextColumns.SetCount(2); //Only have the second section be two columns.
+            //oDoc.PageSetup.TextColumns.SetCount(2);
             
 
         }

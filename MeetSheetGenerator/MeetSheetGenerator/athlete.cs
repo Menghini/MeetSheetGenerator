@@ -28,5 +28,14 @@ namespace MeetSheetGenerator
             }
             return null;
         }
+        public string getSchool()
+        {
+            return school;
+        }
+        public override string ToString()
+        {
+            //Just print the name of the event.
+            return firstName + " " + lastName;
+        }
     }
 }

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
+using Word = Microsoft.Office.Interop.Word;
 
 namespace MeetSheetGenerator
 {
@@ -62,6 +63,7 @@ namespace MeetSheetGenerator
 
             int intPageNum = reader.NumberOfPages; //Get the number of pages this document has.
             Event currentEvent = null; //The current event that we are on.
+            String eventType = null;
             for (int currentPage = 1; currentPage <= intPageNum; currentPage++)
             {
                 for (int i = 0; i <= 1; i++)
@@ -73,7 +75,7 @@ namespace MeetSheetGenerator
                     if (i == 1)
                     {
                         columnLocationX = pageWidth / 2; //Change this value to be on the right side.
-                        columnLocationY = 0;
+                        //columnLocationY = 0;
                     }
 
                     System.util.RectangleJ rect = new System.util.RectangleJ(columnLocationX, columnLocationY, pageWidth / 2, pageHeight); //x, y, width, height
@@ -82,50 +84,89 @@ namespace MeetSheetGenerator
                         new LocationTextExtractionStrategy(), filter);
                     String single_column = PdfTextExtractor.GetTextFromPage(reader, currentPage, strategy); //Get the entire text from the column.
                     String[] line = single_column.Split('\n'); //Get the columns one by one
+                    
 
-
-                    for (int j = 0; j < line.Length; j++)
+                    for (int j = 5; j < line.Length; j++)
                     {
                         //First off, are we on an event?
                         string currentLine = line[j];
                         int position;
-                        if (currentLine.Substring(0,5).Equals("Event"))
+                        if (currentLine.Substring(0, 5).Equals("Event"))
                         {
-                            
-                            
+                            //Check to see if we already had a current event in progress
+                            if(currentEvent!= null)
+                            {
+                                events.Add(currentEvent); //Add the current event (the one we just finished)
+                            }
                             //We need to get to the end of event # in the line because it holds the event name.
                             currentLine = currentLine.Substring(currentLine.IndexOf("   ") + 3);
-                            currentLine = currentLine.Substring(0,currentLine.LastIndexOf("("));
+                            currentLine = currentLine.Substring(0, currentLine.LastIndexOf("("));
                             currentLine = currentLine.Trim(' ');
                             //currentLine = currentLine.Substring(currentLine.IndexOf(' '));
                             //Console.WriteLine(currentLine);
                             //bool isNumeric = int.TryParse("123", out postion);
                             //What is left of currentLine is the event title.
                             currentEvent = new Event(currentLine);
+                            eventType = null; //We don't know what type of event this is just yet.
                         }
-                        else if(int.TryParse(currentLine.Substring(0,1), out position))
+                        //Check to see if we have determined the event type
+                        else if (eventType == null)
+                        {
+                            //Since we haven't we need to check.
+                            if (currentLine.Contains("Lane Team Relay Seed Time")) //Must be a relay event
+                            {
+                                eventType = "Relay";
+                            }
+                            else if (currentLine.Contains("Pos Name Yr  School Seed Mark")) //Must be a field event
+                            {
+                                eventType = "Field";
+                            }
+                            else if (currentLine.Contains("Lane Name Yr  School")) //Must be a track event
+                            {
+                                eventType = "Track";
+                            }
+                        }
+                        else if (currentLine.StartsWith("Flight"))
+                        {
+                            continue; //This line is useless to us... skip it.
+                        }
+                        //else if(int.TryParse(currentLine.Substring(0,1), out position))
+                        else if (eventType.Equals("Track") || eventType.Equals("Field"))
                         {
                             //Console.WriteLine(currentLine);
                             string[] lineAtHand = currentLine.Split(' ');
+                            //With a split on a space the incoming format should read...
+                            //position lastName firstName (optional nickname) year school seedMark
                             string lastName = lineAtHand[1].Trim(',');
                             string firstName = lineAtHand[2];
                             string school = lineAtHand[4];
+                            //For whatever reason a person can have a name with a parenthesis
+                            if (lineAtHand[3].StartsWith("("))
+                            {
+                                firstName = lineAtHand[3].Substring(1, lineAtHand[3].Length - 2); //Cut off the parenthesis
+                                school = lineAtHand[5]; //Have to redefine school as well.
+                            }
+                            //Check to see if the school is in the school list.
+                            if (!schools.Contains(school))
+                            {
+                                schools.Add(school);
+                            }
                             Athlete person = new Athlete(firstName, lastName, school); //Create an athlete
                             currentEvent.addAthlete(person); //Add the athlete to the event.
                             //Console.WriteLine(lastName);
                         }
-                            //Event  3   (G) T.J. (28)
-                        //Console.WriteLine(line[j]); //Write it out into a text file.
-                        /*if (line[j].Contains("Marquette")) //I only care about Marquette teams
-                        {
-                            Console.WriteLine(line[j]); //Write it out into a text file.
-                            //TRXC Timing, LLC. - Contractor License
-                        }*/
                     }
                 }
-                return; //Let's just keep this to one page for now.
+                progressBarFileRead.Value=currentPage/intPageNum*100;
+                //break; //Let's just keep this to one page for now.
 
             }
+            //Do we still have an event to take care of?
+            if(currentEvent!= null)
+            {
+                events.Add(currentEvent); //We need to add the last event to the list before we forget.
+            }
+            
             /*foreach (Event currentEvents in events)
             {
                 Console.WriteLine(currentEvents.getName());
@@ -150,13 +191,25 @@ namespace MeetSheetGenerator
             else if(fileType.Equals("TRXC Flight Sheet"))
             {
                 readTRXCFlightSheet(reader);
-                return;
             }
             else if (fileType.Equals("TRXC Line Up"))
             {
                 //TODO
                 return;
             }
+            //comboBoxSchools.Items.Add("nothing");
+            foreach (string currentSchool in schools)
+            {
+                comboBoxSchools.Items.Add(currentSchool);
+                comboBoxSchools.SelectedIndex = 0; //Set to the first element
+                groupBox2.Enabled = true;
+            }
+            foreach(Event currentEvent in events)
+            {
+                listBoxEvents.Items.Add(currentEvent);
+            }
+            
+            //comboBoxSchools.Sorted
 
         }
 
@@ -164,6 +217,93 @@ namespace MeetSheetGenerator
         {
             events = new List<Event>();
             schools = new List<string>();
+        }
+        private void openMeetSheet()
+        {
+            object oMissing = System.Reflection.Missing.Value;
+            object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
+
+            //Start Word and create a new document.
+            Word._Application oWord;
+            Word._Document oDoc;
+            oWord = new Word.Application();
+            oWord.Visible = true;
+            oDoc = oWord.Documents.Add(ref oMissing, ref oMissing,
+                ref oMissing, ref oMissing);
+
+            //Insert a paragraph at the beginning of the document.
+            Word.Paragraph oPara1;
+            oPara1 = oDoc.Content.Paragraphs.Add(ref oMissing);
+            oPara1.Range.Text = "Rockwood Summit High School / Falcon Track & Field Meet Sheet";
+            oWord.ActiveDocument.PageSetup.LeftMargin = (float)36;
+            oWord.ActiveDocument.PageSetup.RightMargin = (float)36;
+            oWord.ActiveDocument.PageSetup.TopMargin = (float)36;
+            oWord.ActiveDocument.PageSetup.BottomMargin = (float)36;
+            oPara1.Range.Font.Bold = 1;
+            oPara1.Range.Font.Size = 10;
+            oPara1.Range.Font.Name = "Times New Roman";
+            oPara1.Format.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+            oPara1.Format.SpaceAfter = 0;    //24 pt spacing after paragraph.
+            oPara1.Range.InsertParagraphAfter();
+            oPara1.Range.Text = "January" + " " + "1st" + ", " + "2017" + ", @ " + "Rockwood Summit" + " VS " + "Marquette";
+            oPara1.Range.InsertParagraphAfter();
+
+            //oPara1.Range.Text = "Running Events:";
+            oPara1.Format.Alignment = Word.WdParagraphAlignment.wdAlignParagraphLeft;
+            oPara1.Range.InsertParagraphAfter();
+
+            foreach (Event currentEvent in listBoxEvents.SelectedItems)
+            {
+                Console.WriteLine(currentEvent.getName());
+                //String tempPrint = currentEvent.getName();
+                oPara1.Range.Font.Bold = 1;
+                oPara1.Range.Font.Underline = Microsoft.Office.Interop.Word.WdUnderline.wdUnderlineSingle;
+                oPara1.Range.Text = currentEvent.getName();
+                oPara1.Range.InsertParagraphAfter();
+                oPara1.Range.Font.Bold = 0;
+                oPara1.Range.Font.Underline = 0;
+                String tempPrint = "\t";
+                int index = 0;
+                foreach (Athlete currentAthlete in currentEvent.getAthletes((String)comboBoxSchools.SelectedItem))
+                {
+                    /*oPara1.Range.Text += currentAthlete.getName(0);
+                    Console.WriteLine(currentAthlete.getName(0));*/
+                    if(index%4==0 && index!=0)
+                    {
+                        tempPrint += "\n\t\t___ " + (String)currentAthlete.getName(0);
+                    }
+                    else
+                    {
+                        tempPrint += "\t___ " + (String)currentAthlete.getName(0);
+                    }
+                    index++;
+                }
+                oPara1.Range.Text = tempPrint;
+                oPara1.Range.InsertParagraphAfter();
+                oPara1.Range.Text = "";
+                oPara1.Range.InsertParagraphAfter(); //Just an extra line :)
+            }
+
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            //Event currentItem = (Event)listBoxEvents.SelectedItem;
+
+            //List<Athlete> athletes = currentItem.getAthletes((String)comboBoxSchools.SelectedItem);
+            /*foreach (Event currentEvent in listBoxEvents.SelectedItems)
+            {
+                Console.WriteLine("---------"+currentEvent.getName()+"----------");
+                foreach (Athlete currentAthlete in currentEvent.getAthletes((String)comboBoxSchools.SelectedItem))
+                {
+                    Console.WriteLine(currentAthlete.getName(0));
+                }
+            }*/
+
+            openMeetSheet();
+
+
+
+
         }
     }
 }

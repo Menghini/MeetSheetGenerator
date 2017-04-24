@@ -115,7 +115,7 @@ namespace MeetSheetGenerator
                         else if (eventType == null)
                         {
                             //Since we haven't we need to check.
-                            if (currentLine.Contains("Lane Team Relay Seed Time")) //Must be a relay event
+                            if (currentLine.Contains("Lane Team")) //Must be a relay event
                             {
                                 eventType = "Relay";
                                 currentEvent.setType(eventType);
@@ -316,10 +316,15 @@ namespace MeetSheetGenerator
                         }
                         index++;
                     }
+                    //Where they any people in this event in the first place?
+                    if(index==0)
+                    {
+                        //If not, add a NO ENTRY
+                        tempPrint += "\t___ NO ENTRY\t___";
+                    }
                     //Should we include an extra slot in the event?
                     if (extraSlot)
                     {
-
                         if (index % 4 != 0)
                         {
                             tempPrint += "\t___ ";
@@ -335,8 +340,17 @@ namespace MeetSheetGenerator
                     oPara1.Range.Text = "";
                     oPara1.Range.InsertParagraphAfter(); //Just an extra line :)
                 }
-                
+                else if (currentEvent.getType().Equals("Relay"))
+                {
+                    setFormatRelay(oPara1);
+                    tempPrint += "\t___\t___\t___\t___\t:_______\n\t{\t___\t___\t}";
+                    oPara1.Range.Text = tempPrint;
+                    oPara1.Range.InsertParagraphAfter();
+                    oPara1.Range.Text = "";
+                    oPara1.Range.InsertParagraphAfter(); //Just an extra line :)
+                }
             }
+            
 
         }
         private void button1_Click(object sender, EventArgs e)

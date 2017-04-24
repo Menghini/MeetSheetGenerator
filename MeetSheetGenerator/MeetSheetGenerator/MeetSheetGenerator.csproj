@@ -34,7 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="itextsharp">
-      <HintPath>.\itextsharp.dll</HintPath>
+      <HintPath>..\..\..\..\..\Documents\Visual Studio 2015\Projects\PDFReaderTest\PDFReaderTest\itextsharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

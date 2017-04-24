@@ -33,19 +33,22 @@
             this.labelProgress = new System.Windows.Forms.Label();
             this.progressBarFileRead = new System.Windows.Forms.ProgressBar();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.radioButtonLastInitalFirst = new System.Windows.Forms.RadioButton();
+            this.radioButtonFirstInitalLast = new System.Windows.Forms.RadioButton();
+            this.radioButtonLastFirst = new System.Windows.Forms.RadioButton();
+            this.radioButtonFirstLast = new System.Windows.Forms.RadioButton();
             this.button1 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.listBoxEvents = new System.Windows.Forms.ListBox();
             this.comboBoxSchools = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.radioButtonFirstLast = new System.Windows.Forms.RadioButton();
-            this.radioButtonLastFirst = new System.Windows.Forms.RadioButton();
-            this.radioButtonFirstInitalLast = new System.Windows.Forms.RadioButton();
-            this.radioButtonLastInitalFirst = new System.Windows.Forms.RadioButton();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.checkBoxExtraSlot = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnBrowse
@@ -88,6 +91,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.groupBox4);
             this.groupBox2.Controls.Add(this.groupBox3);
             this.groupBox2.Controls.Add(this.button1);
             this.groupBox2.Controls.Add(this.label2);
@@ -102,9 +106,71 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Customize";
             // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.radioButtonLastInitalFirst);
+            this.groupBox3.Controls.Add(this.radioButtonFirstInitalLast);
+            this.groupBox3.Controls.Add(this.radioButtonLastFirst);
+            this.groupBox3.Controls.Add(this.radioButtonFirstLast);
+            this.groupBox3.Location = new System.Drawing.Point(135, 40);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(185, 65);
+            this.groupBox3.TabIndex = 9;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Output Name Options";
+            // 
+            // radioButtonLastInitalFirst
+            // 
+            this.radioButtonLastInitalFirst.AutoSize = true;
+            this.radioButtonLastInitalFirst.Location = new System.Drawing.Point(81, 42);
+            this.radioButtonLastInitalFirst.Name = "radioButtonLastInitalFirst";
+            this.radioButtonLastInitalFirst.Size = new System.Drawing.Size(94, 17);
+            this.radioButtonLastInitalFirst.TabIndex = 3;
+            this.radioButtonLastInitalFirst.TabStop = true;
+            this.radioButtonLastInitalFirst.Text = "Last Inital/First";
+            this.radioButtonLastInitalFirst.UseVisualStyleBackColor = true;
+            this.radioButtonLastInitalFirst.CheckedChanged += new System.EventHandler(this.radioButtonLastInitalFirst_CheckedChanged);
+            // 
+            // radioButtonFirstInitalLast
+            // 
+            this.radioButtonFirstInitalLast.AutoSize = true;
+            this.radioButtonFirstInitalLast.Location = new System.Drawing.Point(81, 19);
+            this.radioButtonFirstInitalLast.Name = "radioButtonFirstInitalLast";
+            this.radioButtonFirstInitalLast.Size = new System.Drawing.Size(94, 17);
+            this.radioButtonFirstInitalLast.TabIndex = 2;
+            this.radioButtonFirstInitalLast.TabStop = true;
+            this.radioButtonFirstInitalLast.Text = "First Inital/Last";
+            this.radioButtonFirstInitalLast.UseVisualStyleBackColor = true;
+            this.radioButtonFirstInitalLast.CheckedChanged += new System.EventHandler(this.radioButtonFirstInitalLast_CheckedChanged);
+            // 
+            // radioButtonLastFirst
+            // 
+            this.radioButtonLastFirst.AutoSize = true;
+            this.radioButtonLastFirst.Location = new System.Drawing.Point(6, 42);
+            this.radioButtonLastFirst.Name = "radioButtonLastFirst";
+            this.radioButtonLastFirst.Size = new System.Drawing.Size(69, 17);
+            this.radioButtonLastFirst.TabIndex = 1;
+            this.radioButtonLastFirst.TabStop = true;
+            this.radioButtonLastFirst.Text = "Last/First";
+            this.radioButtonLastFirst.UseVisualStyleBackColor = true;
+            this.radioButtonLastFirst.CheckedChanged += new System.EventHandler(this.radioButtonLastFirst_CheckedChanged);
+            // 
+            // radioButtonFirstLast
+            // 
+            this.radioButtonFirstLast.AutoSize = true;
+            this.radioButtonFirstLast.Checked = true;
+            this.radioButtonFirstLast.Location = new System.Drawing.Point(6, 19);
+            this.radioButtonFirstLast.Name = "radioButtonFirstLast";
+            this.radioButtonFirstLast.Size = new System.Drawing.Size(69, 17);
+            this.radioButtonFirstLast.TabIndex = 0;
+            this.radioButtonFirstLast.TabStop = true;
+            this.radioButtonFirstLast.Text = "First/Last";
+            this.radioButtonFirstLast.UseVisualStyleBackColor = true;
+            this.radioButtonFirstLast.CheckedChanged += new System.EventHandler(this.radioButtonFirstLast_CheckedChanged);
+            // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(187, 161);
+            this.button1.Location = new System.Drawing.Point(187, 219);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 8;
@@ -149,67 +215,26 @@
             this.label1.TabIndex = 4;
             this.label1.Text = "School Name:";
             // 
-            // groupBox3
+            // groupBox4
             // 
-            this.groupBox3.Controls.Add(this.radioButtonLastInitalFirst);
-            this.groupBox3.Controls.Add(this.radioButtonFirstInitalLast);
-            this.groupBox3.Controls.Add(this.radioButtonLastFirst);
-            this.groupBox3.Controls.Add(this.radioButtonFirstLast);
-            this.groupBox3.Location = new System.Drawing.Point(135, 40);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(185, 65);
-            this.groupBox3.TabIndex = 9;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Output Name Options";
+            this.groupBox4.Controls.Add(this.checkBoxExtraSlot);
+            this.groupBox4.Location = new System.Drawing.Point(141, 113);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(179, 100);
+            this.groupBox4.TabIndex = 10;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Other Options";
             // 
-            // radioButtonFirstLast
+            // checkBoxExtraSlot
             // 
-            this.radioButtonFirstLast.AutoSize = true;
-            this.radioButtonFirstLast.Checked = true;
-            this.radioButtonFirstLast.Location = new System.Drawing.Point(6, 19);
-            this.radioButtonFirstLast.Name = "radioButtonFirstLast";
-            this.radioButtonFirstLast.Size = new System.Drawing.Size(69, 17);
-            this.radioButtonFirstLast.TabIndex = 0;
-            this.radioButtonFirstLast.TabStop = true;
-            this.radioButtonFirstLast.Text = "First/Last";
-            this.radioButtonFirstLast.UseVisualStyleBackColor = true;
-            this.radioButtonFirstLast.CheckedChanged += new System.EventHandler(this.radioButtonFirstLast_CheckedChanged);
-            // 
-            // radioButtonLastFirst
-            // 
-            this.radioButtonLastFirst.AutoSize = true;
-            this.radioButtonLastFirst.Location = new System.Drawing.Point(6, 42);
-            this.radioButtonLastFirst.Name = "radioButtonLastFirst";
-            this.radioButtonLastFirst.Size = new System.Drawing.Size(69, 17);
-            this.radioButtonLastFirst.TabIndex = 1;
-            this.radioButtonLastFirst.TabStop = true;
-            this.radioButtonLastFirst.Text = "Last/First";
-            this.radioButtonLastFirst.UseVisualStyleBackColor = true;
-            this.radioButtonLastFirst.CheckedChanged += new System.EventHandler(this.radioButtonLastFirst_CheckedChanged);
-            // 
-            // radioButtonFirstInitalLast
-            // 
-            this.radioButtonFirstInitalLast.AutoSize = true;
-            this.radioButtonFirstInitalLast.Location = new System.Drawing.Point(81, 19);
-            this.radioButtonFirstInitalLast.Name = "radioButtonFirstInitalLast";
-            this.radioButtonFirstInitalLast.Size = new System.Drawing.Size(94, 17);
-            this.radioButtonFirstInitalLast.TabIndex = 2;
-            this.radioButtonFirstInitalLast.TabStop = true;
-            this.radioButtonFirstInitalLast.Text = "First Inital/Last";
-            this.radioButtonFirstInitalLast.UseVisualStyleBackColor = true;
-            this.radioButtonFirstInitalLast.CheckedChanged += new System.EventHandler(this.radioButtonFirstInitalLast_CheckedChanged);
-            // 
-            // radioButtonLastInitalFirst
-            // 
-            this.radioButtonLastInitalFirst.AutoSize = true;
-            this.radioButtonLastInitalFirst.Location = new System.Drawing.Point(81, 42);
-            this.radioButtonLastInitalFirst.Name = "radioButtonLastInitalFirst";
-            this.radioButtonLastInitalFirst.Size = new System.Drawing.Size(94, 17);
-            this.radioButtonLastInitalFirst.TabIndex = 3;
-            this.radioButtonLastInitalFirst.TabStop = true;
-            this.radioButtonLastInitalFirst.Text = "Last Inital/First";
-            this.radioButtonLastInitalFirst.UseVisualStyleBackColor = true;
-            this.radioButtonLastInitalFirst.CheckedChanged += new System.EventHandler(this.radioButtonLastInitalFirst_CheckedChanged);
+            this.checkBoxExtraSlot.AutoSize = true;
+            this.checkBoxExtraSlot.Location = new System.Drawing.Point(7, 20);
+            this.checkBoxExtraSlot.Name = "checkBoxExtraSlot";
+            this.checkBoxExtraSlot.Size = new System.Drawing.Size(133, 17);
+            this.checkBoxExtraSlot.TabIndex = 0;
+            this.checkBoxExtraSlot.Text = "Inluce Extra Blank Slot";
+            this.checkBoxExtraSlot.UseVisualStyleBackColor = true;
+            this.checkBoxExtraSlot.CheckedChanged += new System.EventHandler(this.checkBoxExtraSlot_CheckedChanged);
             // 
             // MainForm
             // 
@@ -228,6 +253,8 @@
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -248,6 +275,8 @@
         private System.Windows.Forms.RadioButton radioButtonFirstInitalLast;
         private System.Windows.Forms.RadioButton radioButtonLastFirst;
         private System.Windows.Forms.RadioButton radioButtonFirstLast;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.CheckBox checkBoxExtraSlot;
     }
 }
 

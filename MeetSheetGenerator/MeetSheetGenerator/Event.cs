@@ -24,6 +24,10 @@ namespace MeetSheetGenerator
         {
             this.eventType = eventType;
         }
+        public String getType()
+        {
+            return eventType;
+        }
         public string getName()
         {
             return name;

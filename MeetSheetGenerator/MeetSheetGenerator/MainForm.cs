@@ -18,6 +18,7 @@ namespace MeetSheetGenerator
         private List<Event> events; //Keeps track of all of the events in for the meet sheet.
         private List<string> schools; //Keeps track of all the schools competing.
         private int nameFormat = 0;
+        private Boolean extraSlot = false;
         public MainForm()
         {
             InitializeComponent();
@@ -117,14 +118,17 @@ namespace MeetSheetGenerator
                             if (currentLine.Contains("Lane Team Relay Seed Time")) //Must be a relay event
                             {
                                 eventType = "Relay";
+                                currentEvent.setType(eventType);
                             }
                             else if (currentLine.Contains("Pos Name Yr  School Seed Mark")) //Must be a field event
                             {
                                 eventType = "Field";
+                                currentEvent.setType(eventType);
                             }
                             else if (currentLine.Contains("Lane Name Yr  School")) //Must be a track event
                             {
                                 eventType = "Track";
+                                currentEvent.setType(eventType);
                             }
                         }
                         else if (currentLine.StartsWith("Flight"))
@@ -219,6 +223,32 @@ namespace MeetSheetGenerator
             events = new List<Event>();
             schools = new List<string>();
         }
+        /// <summary>
+        /// Sets the format for tabs into a relay format
+        /// </summary>
+        private void setFormatRelay(Word.Paragraph oPara1)
+        {
+            oPara1.TabStops.ClearAll();
+            float tabIndex = (float).5 * 72; //Add takes a "point". 1 inch = 72 points
+            for (int i = 0; i < 5; i++)
+            {
+                oPara1.TabStops.Add(tabIndex, 0, 0);
+                tabIndex += (float)1.5 * 72;
+            }
+        }
+        /// <summary>
+        /// Sets the format for tabs into a individual athelete format
+        /// </summary>
+        private void setFormatIndividual(Word.Paragraph oPara1)
+        {
+            oPara1.TabStops.ClearAll();
+            float tabIndex = (float)1 * 72; //Add takes a "point". 1 inch = 72 points
+            for (int i = 0; i < 4; i++)
+            {
+                oPara1.TabStops.Add(tabIndex, 0, 0);
+                tabIndex += (float)1.5 * 72;
+            }
+        }
         private void openMeetSheet()
         {
             object oMissing = System.Reflection.Missing.Value;
@@ -263,26 +293,49 @@ namespace MeetSheetGenerator
                 oPara1.Range.InsertParagraphAfter();
                 oPara1.Range.Font.Bold = 0;
                 oPara1.Range.Font.Underline = 0;
-                String tempPrint = "\t";
+
+
+
+                String tempPrint = "";
                 int index = 0;
-                foreach (Athlete currentAthlete in currentEvent.getAthletes((String)comboBoxSchools.SelectedItem))
+                //Is this a track event (as opposed to a relay or field event?
+                if(currentEvent.getType().Equals("Track"))
                 {
-                    /*oPara1.Range.Text += currentAthlete.getName(0);
-                    Console.WriteLine(currentAthlete.getName(0));*/
-                    if(index%4==0 && index!=0)
+                    setFormatIndividual(oPara1); //Set the format for tabs to be a track event
+                    foreach (Athlete currentAthlete in currentEvent.getAthletes((String)comboBoxSchools.SelectedItem))
                     {
-                        tempPrint += "\n\t\t___ " + (String)currentAthlete.getName(nameFormat);
+                        /*oPara1.Range.Text += currentAthlete.getName(0);
+                        Console.WriteLine(currentAthlete.getName(0));*/
+                        if (index % 4 == 0 && index != 0)
+                        {
+                            tempPrint += "\n\t___ " + (String)currentAthlete.getName(nameFormat);
+                        }
+                        else
+                        {
+                            tempPrint += "\t___ " + (String)currentAthlete.getName(nameFormat);
+                        }
+                        index++;
                     }
-                    else
+                    //Should we include an extra slot in the event?
+                    if (extraSlot)
                     {
-                        tempPrint += "\t___ " + (String)currentAthlete.getName(nameFormat);
+
+                        if (index % 4 != 0)
+                        {
+                            tempPrint += "\t___ ";
+                        }
+                        else
+                        {
+                            tempPrint += "\n\t___ ";
+                        }
                     }
-                    index++;
+
+                    oPara1.Range.Text = tempPrint;
+                    oPara1.Range.InsertParagraphAfter();
+                    oPara1.Range.Text = "";
+                    oPara1.Range.InsertParagraphAfter(); //Just an extra line :)
                 }
-                oPara1.Range.Text = tempPrint;
-                oPara1.Range.InsertParagraphAfter();
-                oPara1.Range.Text = "";
-                oPara1.Range.InsertParagraphAfter(); //Just an extra line :)
+                
             }
 
         }
@@ -325,6 +378,18 @@ namespace MeetSheetGenerator
         private void radioButtonLastInitalFirst_CheckedChanged(object sender, EventArgs e)
         {
             nameFormat = 3;
+        }
+
+        private void checkBoxExtraSlot_CheckedChanged(object sender, EventArgs e)
+        {
+            if(checkBoxExtraSlot.Checked)
+            {
+                extraSlot = true;
+            }
+            else
+            {
+                extraSlot = false;
+            }
         }
     }
 }

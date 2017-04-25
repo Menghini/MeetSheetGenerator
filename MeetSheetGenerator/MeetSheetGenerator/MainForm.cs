@@ -262,6 +262,7 @@ namespace MeetSheetGenerator
         }
         private void openMeetSheet()
         {
+            //TODO: Schools that have a name with a space do not work (they do not display correctly)
             object oMissing = System.Reflection.Missing.Value;
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
@@ -407,19 +408,22 @@ namespace MeetSheetGenerator
                     if (index == 0)
                     {
                         //If not, add a NO ENTRY
-                        tempPrint += "\t___ NO ENTRY";
+                        tempPrint += "___ NO ENTRY";
                     }
                     //Should we include an extra slot in the event?
-                    //TODO: Fix this... doesn't work for field events.
                     if (extraSlot)
                     {
-                        if (index % 4 != 0 || index == 0)
+                        if (index % 2 == 1)
                         {
                             tempPrint += "\t___ ";
                         }
-                        else
+                        else if (index == 0)
                         {
-                            tempPrint += "\n\t___ ";
+                            tempPrint += "___ ";
+                        }
+                        else if (index % 2 == 0)
+                        {
+                            tempPrint += "\n___ ";
                         }
                     }
 

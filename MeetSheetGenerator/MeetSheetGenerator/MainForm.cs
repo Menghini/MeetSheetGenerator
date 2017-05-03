@@ -43,10 +43,10 @@ namespace MeetSheetGenerator
         private string checkDocument(PdfReader reader)
         {
             String pageText = PdfTextExtractor.GetTextFromPage(reader, 1);
-            if (pageText.Contains("TRXC Timing, LLC. - Contractor License"))
+            if (pageText.Contains("Hy-Tek's MEET MANAGER"))
             {
                 //It seems that the flight sheet always has this line in it.
-                return "TRXC Flight Sheet";
+                return "Hy-Tek Flight Sheet";
             }
             else if(pageText.Contains("TRXC Timing, LLC"))
             {
@@ -177,7 +177,105 @@ namespace MeetSheetGenerator
                 Console.WriteLine(currentEvents.getName());
             }*/
         }
-        
+        private void readTRXCLineUp(PdfReader reader)
+        {
+            //TODO: Need to fill out what is a field event and what is a track event.
+            iTextSharp.text.Rectangle mediabox = reader.GetPageSize(2); //Get the page size as a Rectangle
+            float pageHeight = mediabox.Height; //Get the page Height
+            float pageWidth = mediabox.Width; //Get the page width
+
+            int intPageNum = reader.NumberOfPages; //Get the number of pages this document has.
+            Event currentEvent = null; //The current event that we are on.
+            String eventType = null;
+            for (int currentPage = 1; currentPage <= intPageNum; currentPage++)
+            {
+
+                float columnLocationX = 0;
+                float columnLocationY = 0;
+                columnLocationX = 0; 
+
+                System.util.RectangleJ rect = new System.util.RectangleJ(columnLocationX, columnLocationY, pageWidth, pageHeight); //x, y, width, height
+                RenderFilter[] filter = { new RegionTextRenderFilter(rect) };
+                ITextExtractionStrategy strategy = new FilteredTextRenderListener(new LocationTextExtractionStrategy(), filter);
+                String entirePage = PdfTextExtractor.GetTextFromPage(reader, currentPage, strategy); //Get the entire text from the column.
+
+                //String entirePage = PdfTextExtractor.GetTextFromPage(reader, currentPage);
+                String[] line = entirePage.Split('\n'); //Get the columns one by one
+
+
+                for (int j = 8; j < line.Length; j++)
+                {
+                    //First off, are we on an event?
+                    string currentLine = line[j];
+                    if (currentLine.Contains("Men's") || currentLine.Contains("Women's") || currentLine.Contains(","))
+                    {
+                        //Check to see if we already had a current event in progress
+                        if (currentEvent != null)
+                        {
+                            events.Add(currentEvent); //Add the current event (the one we just finished)
+                        }
+                        if(currentLine.Contains(","))
+                        {
+                            //If the line contains a comma, it might be a name... so let's just break out of this.
+                            return;
+                        }
+                        //CurrentLine is the event title.
+                        currentEvent = new Event(currentLine);
+                        eventType = null; //We don't know what type of event this is just yet.
+                    }
+                    else
+                    {
+                        if (currentLine.Contains("First Name") || currentLine.Contains("Division Performance"))
+                        {
+                            //We must be the header, and not the actual names of the people in this event.
+                            //So... move on to the next line.
+                            continue;
+                        }
+
+                        string[] lineAtHand = currentLine.Split(' ');
+                        //With a split on a space the incoming format should read...
+                        //position lastName firstName (optional nickname) year school seedMark
+                        if(lineAtHand.Length<2)
+                        {
+                            continue;
+                        }
+                        string lastName = lineAtHand[1];
+                        string firstName = lineAtHand[0];
+                        string school = "Marquette";  //Change this
+                        /*
+                        TODO: I do not think this is still true for this type of sheet.
+                        //For whatever reason a person can have a name with a parenthesis
+                        if (lineAtHand[3].StartsWith("("))
+                        {
+                            firstName = lineAtHand[3].Substring(1, lineAtHand[3].Length - 2); //Cut off the parenthesis
+                            school = lineAtHand[5]; //Have to redefine school as well.
+                        }*/
+                        //Check to see if the school is in the school list.
+                        if (!schools.Contains(school))
+                        {
+                            schools.Add(school);
+                        }
+                        Athlete person = new Athlete(firstName, lastName, school); //Create an athlete
+                        currentEvent.addAthlete(person); //Add the athlete to the event.
+                        //Console.WriteLine(lastName);
+                    }
+                }
+            progressBarFileRead.Value = currentPage / intPageNum * 100;
+            //break; //Let's just keep this to one page for now.
+
+            }
+            //Do we still have an event to take care of?
+            if (currentEvent != null)
+            {
+                events.Add(currentEvent); //We need to add the last event to the list before we forget.
+            }
+
+            /*foreach (Event currentEvents in events)
+            {
+                Console.WriteLine(currentEvents.getName());
+            }*/
+        }
+
         private void btnBrowse_Click(object sender, EventArgs e)
         {
             string fileLocation = findFile("PDF File|*.pdf", "Select a PDF File"); //First ask where the file is.
@@ -193,14 +291,13 @@ namespace MeetSheetGenerator
                 MessageBox.Show("File type is not recognized.", "File Type Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            else if(fileType.Equals("TRXC Flight Sheet"))
+            else if(fileType.Equals("Hy-Tek Flight Sheet"))
             {
                 readTRXCFlightSheet(reader);
             }
             else if (fileType.Equals("TRXC Line Up"))
             {
-                //TODO
-                return;
+                readTRXCLineUp(reader);
             }
             //comboBoxSchools.Items.Add("nothing");
             foreach (string currentSchool in schools)
@@ -277,7 +374,7 @@ namespace MeetSheetGenerator
             //Insert a paragraph at the beginning of the document.
             Word.Paragraph oPara1;
             oPara1 = oDoc.Content.Paragraphs.Add(ref oMissing);
-            oPara1.Range.Text = "Rockwood Summit High School / Falcon Track & Field Meet Sheet";
+            oPara1.Range.Text = (String)comboBoxSchools.SelectedItem + " Track & Field Meet Sheet";
             oWord.ActiveDocument.PageSetup.LeftMargin = (float)36;
             oWord.ActiveDocument.PageSetup.RightMargin = (float)36;
             oWord.ActiveDocument.PageSetup.TopMargin = (float)36;
@@ -288,7 +385,7 @@ namespace MeetSheetGenerator
             oPara1.Format.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
             oPara1.Format.SpaceAfter = 0;    //24 pt spacing after paragraph.
             oPara1.Range.InsertParagraphAfter();
-            oPara1.Range.Text = "January" + " " + "1st" + ", " + "2017" + ", @ " + "Rockwood Summit" + " VS " + "Marquette";
+            oPara1.Range.Text = "January" + " " + "1st" + ", " + "2017" + ", @ " + "TBD";
             oPara1.Range.InsertParagraphAfter();
 
             //oPara1.Range.Text = "Running Events:";
@@ -489,6 +586,22 @@ namespace MeetSheetGenerator
             else
             {
                 extraSlot = false;
+            }
+        }
+
+        private void buttonSelectAll_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < listBoxEvents.Items.Count; i++)
+            {
+                listBoxEvents.SetSelected(i, true);
+            }
+        }
+
+        private void buttonSelectNone_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < listBoxEvents.Items.Count; i++)
+            {
+                listBoxEvents.SetSelected(i, false);
             }
         }
     }

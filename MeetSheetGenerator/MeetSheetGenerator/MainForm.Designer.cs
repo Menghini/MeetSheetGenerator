@@ -33,6 +33,8 @@
             this.labelProgress = new System.Windows.Forms.Label();
             this.progressBarFileRead = new System.Windows.Forms.ProgressBar();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.checkBoxExtraSlot = new System.Windows.Forms.CheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.radioButtonLastInitalFirst = new System.Windows.Forms.RadioButton();
             this.radioButtonFirstInitalLast = new System.Windows.Forms.RadioButton();
@@ -43,12 +45,12 @@
             this.listBoxEvents = new System.Windows.Forms.ListBox();
             this.comboBoxSchools = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.checkBoxExtraSlot = new System.Windows.Forms.CheckBox();
+            this.buttonSelectAll = new System.Windows.Forms.Button();
+            this.buttonSelectNone = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnBrowse
@@ -91,6 +93,8 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.buttonSelectNone);
+            this.groupBox2.Controls.Add(this.buttonSelectAll);
             this.groupBox2.Controls.Add(this.groupBox4);
             this.groupBox2.Controls.Add(this.groupBox3);
             this.groupBox2.Controls.Add(this.button1);
@@ -101,10 +105,31 @@
             this.groupBox2.Enabled = false;
             this.groupBox2.Location = new System.Drawing.Point(18, 65);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(326, 265);
+            this.groupBox2.Size = new System.Drawing.Size(326, 320);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Customize";
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.checkBoxExtraSlot);
+            this.groupBox4.Location = new System.Drawing.Point(141, 113);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(179, 100);
+            this.groupBox4.TabIndex = 10;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Other Options";
+            // 
+            // checkBoxExtraSlot
+            // 
+            this.checkBoxExtraSlot.AutoSize = true;
+            this.checkBoxExtraSlot.Location = new System.Drawing.Point(7, 20);
+            this.checkBoxExtraSlot.Name = "checkBoxExtraSlot";
+            this.checkBoxExtraSlot.Size = new System.Drawing.Size(133, 17);
+            this.checkBoxExtraSlot.TabIndex = 0;
+            this.checkBoxExtraSlot.Text = "Inluce Extra Blank Slot";
+            this.checkBoxExtraSlot.UseVisualStyleBackColor = true;
+            this.checkBoxExtraSlot.CheckedChanged += new System.EventHandler(this.checkBoxExtraSlot_CheckedChanged);
             // 
             // groupBox3
             // 
@@ -170,11 +195,11 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(187, 219);
+            this.button1.Location = new System.Drawing.Point(169, 219);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(112, 23);
             this.button1.TabIndex = 8;
-            this.button1.Text = "button1";
+            this.button1.Text = "Open In Word";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -215,32 +240,31 @@
             this.label1.TabIndex = 4;
             this.label1.Text = "School Name:";
             // 
-            // groupBox4
+            // buttonSelectAll
             // 
-            this.groupBox4.Controls.Add(this.checkBoxExtraSlot);
-            this.groupBox4.Location = new System.Drawing.Point(141, 113);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(179, 100);
-            this.groupBox4.TabIndex = 10;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Other Options";
+            this.buttonSelectAll.Location = new System.Drawing.Point(9, 261);
+            this.buttonSelectAll.Name = "buttonSelectAll";
+            this.buttonSelectAll.Size = new System.Drawing.Size(120, 23);
+            this.buttonSelectAll.TabIndex = 11;
+            this.buttonSelectAll.Text = "Select All";
+            this.buttonSelectAll.UseVisualStyleBackColor = true;
+            this.buttonSelectAll.Click += new System.EventHandler(this.buttonSelectAll_Click);
             // 
-            // checkBoxExtraSlot
+            // buttonSelectNone
             // 
-            this.checkBoxExtraSlot.AutoSize = true;
-            this.checkBoxExtraSlot.Location = new System.Drawing.Point(7, 20);
-            this.checkBoxExtraSlot.Name = "checkBoxExtraSlot";
-            this.checkBoxExtraSlot.Size = new System.Drawing.Size(133, 17);
-            this.checkBoxExtraSlot.TabIndex = 0;
-            this.checkBoxExtraSlot.Text = "Inluce Extra Blank Slot";
-            this.checkBoxExtraSlot.UseVisualStyleBackColor = true;
-            this.checkBoxExtraSlot.CheckedChanged += new System.EventHandler(this.checkBoxExtraSlot_CheckedChanged);
+            this.buttonSelectNone.Location = new System.Drawing.Point(9, 290);
+            this.buttonSelectNone.Name = "buttonSelectNone";
+            this.buttonSelectNone.Size = new System.Drawing.Size(120, 23);
+            this.buttonSelectNone.TabIndex = 12;
+            this.buttonSelectNone.Text = "Unselect All";
+            this.buttonSelectNone.UseVisualStyleBackColor = true;
+            this.buttonSelectNone.Click += new System.EventHandler(this.buttonSelectNone_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(361, 342);
+            this.ClientSize = new System.Drawing.Size(361, 390);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Name = "MainForm";
@@ -251,10 +275,10 @@
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -277,6 +301,8 @@
         private System.Windows.Forms.RadioButton radioButtonFirstLast;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.CheckBox checkBoxExtraSlot;
+        private System.Windows.Forms.Button buttonSelectNone;
+        private System.Windows.Forms.Button buttonSelectAll;
     }
 }
 

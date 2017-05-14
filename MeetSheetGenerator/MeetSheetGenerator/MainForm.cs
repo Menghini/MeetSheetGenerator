@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
 using Word = Microsoft.Office.Interop.Word;
+using System.Text.RegularExpressions;
 
 namespace MeetSheetGenerator
 {
@@ -196,36 +197,53 @@ namespace MeetSheetGenerator
 
                 System.util.RectangleJ rect = new System.util.RectangleJ(columnLocationX, columnLocationY, pageWidth, pageHeight); //x, y, width, height
                 RenderFilter[] filter = { new RegionTextRenderFilter(rect) };
-                ITextExtractionStrategy strategy = new FilteredTextRenderListener(new LocationTextExtractionStrategy(), filter);
+                //ITextExtractionStrategy strategy = new FilteredTextRenderListener(new LocationTextExtractionStrategy(), filter);
+                ITextExtractionStrategy strategy = new SimpleTextExtractionStrategy();
                 String entirePage = PdfTextExtractor.GetTextFromPage(reader, currentPage, strategy); //Get the entire text from the column.
 
                 //String entirePage = PdfTextExtractor.GetTextFromPage(reader, currentPage);
                 String[] line = entirePage.Split('\n'); //Get the columns one by one
+                Boolean isRelay = false;
 
-
-                for (int j = 8; j < line.Length; j++)
+                //The first event is always on line 6 for this type of file.
+                for (int j = 6; j < line.Length; j++)
                 {
                     //First off, are we on an event?
                     string currentLine = line[j];
-                    if (currentLine.Contains("Men's") || currentLine.Contains("Women's") || currentLine.Contains(","))
+                    if (currentLine.Contains("Men's") || currentLine.Contains("Women's"))
                     {
                         //Check to see if we already had a current event in progress
                         if (currentEvent != null)
                         {
                             events.Add(currentEvent); //Add the current event (the one we just finished)
                         }
-                        if(currentLine.Contains(","))
-                        {
-                            //If the line contains a comma, it might be a name... so let's just break out of this.
-                            return;
-                        }
                         //CurrentLine is the event title.
                         currentEvent = new Event(currentLine);
                         eventType = null; //We don't know what type of event this is just yet.
+                        if (currentLine.Contains("Relay"))
+                        {
+                            //This event MUST be a relay event...
+                            currentEvent.setType("Relay");
+                        }
+                        else if (currentLine.Any(c => char.IsDigit(c)))
+                        {
+                            //Does the line contain a number at all? Then it must be a track event.
+                            currentEvent.setType("Track");
+                        }
+                        else
+                        {
+                            //If the line is not a relay event or a track event, it must be a field event.
+                            currentEvent.setType("Field");
+                        }
+                    }
+                    else if (currentLine.Contains(","))
+                    {
+                        //If the line contains a comma, it might be a name... so let's just break out of this. We already checked to see if it was an event so it can't be 3,200 or 1,600
+                        return;
                     }
                     else
                     {
-                        if (currentLine.Contains("First Name") || currentLine.Contains("Division Performance"))
+                        if (currentLine.Contains("First Name") || currentLine.Contains("Relay Letter"))
                         {
                             //We must be the header, and not the actual names of the people in this event.
                             //So... move on to the next line.
@@ -233,23 +251,41 @@ namespace MeetSheetGenerator
                         }
 
                         string[] lineAtHand = currentLine.Split(' ');
+                        string lastName = "";
+                        string firstName = "";
+                        if (currentEvent.getType()!=null && !currentEvent.getType().Equals("Relay"))
+                        {
+                            //Since this is not a relay event... there is a first and/or last name.
+                            lastName = lineAtHand[1];
+                            firstName = lineAtHand[0];
+                        }
                         //With a split on a space the incoming format should read...
-                        //position lastName firstName (optional nickname) year school seedMark
+                        //FirstName, LastName, Class, Division, Performance, Empty String, Rank, Team, School
+                        /*
+                        TODO: Not sure if this is needed....
                         if(lineAtHand.Length<2)
                         {
                             continue;
                         }
-                        string lastName = lineAtHand[1];
-                        string firstName = lineAtHand[0];
-                        string school = "Marquette";  //Change this
-                        /*
-                        TODO: I do not think this is still true for this type of sheet.
-                        //For whatever reason a person can have a name with a parenthesis
-                        if (lineAtHand[3].StartsWith("("))
+                        */
+                        string school = ""; 
+                        if (lineAtHand[lineAtHand.Length-2].Length==4)
                         {
-                            firstName = lineAtHand[3].Substring(1, lineAtHand[3].Length - 2); //Cut off the parenthesis
-                            school = lineAtHand[5]; //Have to redefine school as well.
-                        }*/
+                            //If the school does NOT have a space....
+                            school = lineAtHand[lineAtHand.Length-1];
+                        }
+                        else
+                        {
+                            //If the school does have a space....
+                            school = lineAtHand[lineAtHand.Length - 2];
+                            school += " " + lineAtHand[lineAtHand.Length - 1];
+                        }
+                        if(school.Any(c => char.IsDigit(c)))
+                        {
+                            //For some reason, relays can have a number in them... this will detect that number.
+                            school = Regex.Replace(school, @"[\d-].", string.Empty);
+                            school = school.Substring(1);
+                        }
                         //Check to see if the school is in the school list.
                         if (!schools.Contains(school))
                         {

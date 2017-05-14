@@ -143,8 +143,21 @@ namespace MeetSheetGenerator
                             string[] lineAtHand = currentLine.Split(' ');
                             //With a split on a space the incoming format should read...
                             //position lastName firstName (optional nickname) year school seedMark
-                            string lastName = lineAtHand[1].Trim(',');
-                            string firstName = lineAtHand[2];
+                            string lastName;
+                            string firstName;
+                            if (lineAtHand[1].Contains(","))
+                            {
+                                //The first thing must be the last name.
+                                lastName = lineAtHand[1].Trim(',');
+                                firstName = lineAtHand[2];
+                            }
+                            else
+                            {
+                                //The second thing must be the last name.
+                                lastName = lineAtHand[2];
+                                firstName = lineAtHand[1];
+                            }
+
                             string school = lineAtHand[4];
                             //For whatever reason a person can have a name with a parenthesis
                             if (lineAtHand[3].StartsWith("("))
@@ -180,7 +193,6 @@ namespace MeetSheetGenerator
         }
         private void readTRXCPerformanceList(PdfReader reader)
         {
-            //TODO: Need to fill out what is a field event and what is a track event.
             iTextSharp.text.Rectangle mediabox = reader.GetPageSize(2); //Get the page size as a Rectangle
             float pageHeight = mediabox.Height; //Get the page Height
             float pageWidth = mediabox.Width; //Get the page width

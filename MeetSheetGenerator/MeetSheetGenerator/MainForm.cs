@@ -49,10 +49,10 @@ namespace MeetSheetGenerator
                 //It seems that the flight sheet always has this line in it.
                 return "Hy-Tek Flight Sheet";
             }
-            else if(pageText.Contains("TRXC Timing, LLC"))
+            else if(pageText.Contains("TRXC Timing, LLC") && pageText.Contains("Rank Team First Name Last Name School Year\nDivision Performance School"))
             {
                 //It seems that the personal pdf that is generated for coaches contains this.
-                return "TRXC Line Up";
+                return "TRXC Performance List";
             }
             return null;
         }
@@ -178,7 +178,7 @@ namespace MeetSheetGenerator
                 Console.WriteLine(currentEvents.getName());
             }*/
         }
-        private void readTRXCLineUp(PdfReader reader)
+        private void readTRXCPerformanceList(PdfReader reader)
         {
             //TODO: Need to fill out what is a field event and what is a track event.
             iTextSharp.text.Rectangle mediabox = reader.GetPageSize(2); //Get the page size as a Rectangle
@@ -331,9 +331,9 @@ namespace MeetSheetGenerator
             {
                 readTRXCFlightSheet(reader);
             }
-            else if (fileType.Equals("TRXC Line Up"))
+            else if (fileType.Equals("TRXC Performance List"))
             {
-                readTRXCLineUp(reader);
+                readTRXCPerformanceList(reader);
             }
             //comboBoxSchools.Items.Add("nothing");
             foreach (string currentSchool in schools)

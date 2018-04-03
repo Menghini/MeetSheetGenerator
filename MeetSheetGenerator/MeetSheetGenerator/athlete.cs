@@ -11,11 +11,20 @@ namespace MeetSheetGenerator
         private string firstName;
         private string lastName;
         private string school;
+        public double priority; //Used for relays.
         public Athlete(string firstName, string lastName, string school)
         {
             this.firstName = firstName;
             this.lastName = lastName;
             this.school = school;
+        }
+        public void addPriority(double priority)
+        {
+            this.priority = priority;
+        }
+        public double getPriority()
+        {
+            return priority;
         }
         /// <summary>
         /// 0 setting is "first last"

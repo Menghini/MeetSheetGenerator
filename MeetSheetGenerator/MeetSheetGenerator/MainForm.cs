@@ -366,14 +366,27 @@ namespace MeetSheetGenerator
 
                     Athlete person = new Athlete(values[1], values[0], "Your School Here");
                     //Users's School is listed as it doesn't really matter since everyone will be from the same school.
-
                     for (int i=2; i<values.Length; i++) //Now we loop through each event and add each student.
                     {
                         if(!values[i].Equals(""))
                         {
-                            events[i - 2].addAthlete(person); //It's i-2 because we events start on the 3rd column.
+                            if (events[i - 2].getType().Equals("Relay")) //If the kid is in a relay we should add their priority.
+                            {
+                                try //Try to catch a possible error.
+                                {
+                                    events[i - 2].addAthlete(person, Convert.ToDouble(values[i])); //It's i-2 because we events start on the 3rd column.
+                                }
+                                catch (System.FormatException e)
+                                {
+                                    MessageBox.Show(person.getName(0)+" is causing an error with the "+events[i-2].getName(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                }
+                                
+                            }
+                            else
+                            {
+                                events[i - 2].addAthlete(person); //It's i-2 because we events start on the 3rd column.
+                            }
                         }
-                            
                     }
                 }
                 progressBarFileRead.Value = 100;
@@ -471,6 +484,7 @@ namespace MeetSheetGenerator
                 tabIndex += (float)1.5 * 72;
             }
         }
+ 
         private void openMeetSheet()
         {
             //TODO: Schools that have a name with a space do not work (they do not display correctly)
@@ -569,8 +583,34 @@ namespace MeetSheetGenerator
                 }
                 else if (currentEvent.getType().Equals("Relay"))
                 {
-                    setFormatRelay(oPara1);
+                    //TODO: This only works with CSV files. This might not work for PDFs....
+                    /*setFormatRelay(oPara1);
                     tempPrint += "\t___\t___\t___\t___\t:_______\n\t{\t___\t___\t}";
+                    oPara1.Range.Text = tempPrint;
+                    oPara1.Range.InsertParagraphAfter();
+                    oPara1.Range.Text = "";
+                    oPara1.Range.InsertParagraphAfter(); //Just an extra line :)*/
+                    setFormatRelay(oPara1); //Set the format for tabs to be a track event
+                    foreach (Athlete currentAthlete in currentEvent.getAthletes((String)comboBoxSchools.SelectedItem))
+                    {
+                        int athletePostion = Int32.Parse(currentAthlete.getPriority().ToString().Substring(currentAthlete.getPriority().ToString().Length-1));
+                        if (athletePostion < 4) //I do this to see the position of the person in the relay (the decimal part).
+                        {
+                            tempPrint += "\t___ " + (String)currentAthlete.getName(nameFormat);
+                        }
+                        else if(athletePostion == 4)
+                        {
+                            tempPrint += "\t___ " + (String)currentAthlete.getName(nameFormat)+ "\t:_______\n\t{\t___\t___\t}\n";
+                        }
+                        index++;
+                    }
+                    //Where they any people in this event in the first place?
+                    if (index == 0)
+                    {
+                        //If not, add a NO ENTRY
+                        tempPrint += "\t___ NO ENTRY";
+                    }
+
                     oPara1.Range.Text = tempPrint;
                     oPara1.Range.InsertParagraphAfter();
                     oPara1.Range.Text = "";

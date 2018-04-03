@@ -40,6 +40,16 @@ namespace MeetSheetGenerator
             }
             
         }
+        //Use this for relays. Priority is x.y. x=relay number and y=position in relay.
+        public void addAthlete(Athlete person, double priority)
+        {
+            if (athletes != null) 
+            {
+                person.addPriority(priority);
+                athletes.Add(person);
+            }
+
+        }
         public void addSchools(String school)
         {
             if(schools!= null)
@@ -56,6 +66,11 @@ namespace MeetSheetGenerator
                 {
                     athletes.Add(currentAthlete);
                 }
+                if (eventType.Equals("Relay")) //If this is a relay we should sort the names of how they will appear on the list.
+                {
+                    //athletes.OrderBy(athletes=>athletes.getName()).toList();
+                    athletes = athletes.OrderBy(o => o.priority).ToList(); //TODO: Priority is currently public. Change this!!!
+                }
                 //listBoxEvents.Items.Add(currentEvent);
             }
             return athletes;
@@ -65,6 +80,5 @@ namespace MeetSheetGenerator
             //Just print the name of the event.
             return name;
         }
-
     }
 }

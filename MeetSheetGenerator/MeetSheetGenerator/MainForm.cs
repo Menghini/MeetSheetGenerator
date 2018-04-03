@@ -11,6 +11,7 @@ using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
 using Word = Microsoft.Office.Interop.Word;
 using System.Text.RegularExpressions;
+using System.IO;
 
 namespace MeetSheetGenerator
 {
@@ -323,42 +324,98 @@ namespace MeetSheetGenerator
                 Console.WriteLine(currentEvents.getName());
             }*/
         }
+        private void readCSVFile(String fileLocation)
+        {
+            Boolean firstLine = true;
+            using (var reader = new StreamReader(fileLocation))
+            {
+                while (!reader.EndOfStream)
+                {
+                    var line = reader.ReadLine();
+                    var values = line.Split(',');
 
+                    //---------The First Line---------
+                    //The first line is just event names.
+                    //The first two columns will be "last name" and "first name" so we can skip about them and start on the 3rd(2) column.
+                    if(firstLine)
+                    {
+                        for (int i = 2; i < values.Length; i++) //Add each event that exist.
+                        {
+                            Event newEvent = new Event(values[i]);
+                            newEvent.setType("Track"); //TODO: Assume the event is a field event.
+                            events.Add(newEvent); //Add the event to the list.
+
+                            //---------All Other Lines---------
+                            //All the other lines are athletes.
+                            comboBoxSchools.Items.Add("Your School Here");
+
+                        }
+                        firstLine = false;
+                        continue;
+                    }
+                    
+
+                    Athlete person = new Athlete(values[0], values[1], "Your School Here");
+                    //Users's School is listed as it doesn't really matter since everyone will be from the same school.
+
+                    for (int i=2; i<values.Length; i++) //Now we loop through each event and add each student.
+                    {
+                        if(!values[i].Equals(""))
+                        {
+                            events[i - 2].addAthlete(person); //It's i-2 because we events start on the 3rd column.
+                        }
+                            
+                    }
+                }
+                progressBarFileRead.Value = 100;
+            }
+        }
         private void btnBrowse_Click(object sender, EventArgs e)
         {
-            string fileLocation = findFile("PDF File|*.pdf", "Select a PDF File"); //First ask where the file is.
+            string fileLocation = findFile("CSV File|*.csv|PDF File|*.pdf", "Select a PDF File"); //First ask where the file is.
+            //The filter is separated by the character, "|".
             //Check to see if a file was selected.
             if (fileLocation == null)
                 return;
-            PdfReader reader = new PdfReader(fileLocation);
+            if(fileLocation.EndsWith("pdf")) //If the file is a PDF file...
+            {
+                PdfReader reader = new PdfReader(fileLocation);
 
-            string fileType=checkDocument(reader);
-            //Check to see if the file type is one of the valid ones.
-            if (fileType == null)
-            {
-                MessageBox.Show("File type is not recognized.", "File Type Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                string fileType = checkDocument(reader);
+                //Check to see if the file type is one of the valid ones.
+                if (fileType == null)
+                {
+                    MessageBox.Show("File type is not recognized.", "File Type Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                else if (fileType.Equals("Hy-Tek Flight Sheet"))
+                {
+                    readTRXCFlightSheet(reader);
+                }
+                else if (fileType.Equals("TRXC Performance List"))
+                {
+                    readTRXCPerformanceList(reader);
+                }
+                //comboBoxSchools.Items.Add("nothing");
+                foreach (string currentSchool in schools)
+                {
+                    comboBoxSchools.Items.Add(currentSchool);
+                }
             }
-            else if(fileType.Equals("Hy-Tek Flight Sheet"))
+            else //If the file is a CSV file.
             {
-                readTRXCFlightSheet(reader);
+                //TODO: For now I'm assuming it is a correct CSV file.
+                readCSVFile(fileLocation);
             }
-            else if (fileType.Equals("TRXC Performance List"))
-            {
-                readTRXCPerformanceList(reader);
-            }
-            //comboBoxSchools.Items.Add("nothing");
-            foreach (string currentSchool in schools)
-            {
-                comboBoxSchools.Items.Add(currentSchool);
-                comboBoxSchools.SelectedIndex = 0; //Set to the first element
-                groupBox2.Enabled = true;
-            }
-            foreach(Event currentEvent in events)
+            comboBoxSchools.SelectedIndex = 0; //Set to the first element
+            groupBox2.Enabled = true;
+
+            foreach (Event currentEvent in events)
             {
                 listBoxEvents.Items.Add(currentEvent);
             }
-            
+
+            return;
             //comboBoxSchools.Sorted
 
         }

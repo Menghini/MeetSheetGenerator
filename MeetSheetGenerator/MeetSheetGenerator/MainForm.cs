@@ -513,7 +513,7 @@ namespace MeetSheetGenerator
             oPara1.Format.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
             oPara1.Format.SpaceAfter = 0;    //24 pt spacing after paragraph.
             oPara1.Range.InsertParagraphAfter();
-            oPara1.Range.Text = "January" + " " + "1st" + ", " + "2017" + ", @ " + "TBD";
+            oPara1.Range.Text = "Monday, January" + " " + "1st" + ", " + "2018" + ", @ " + "TBD";
             oPara1.Range.InsertParagraphAfter();
 
             //oPara1.Range.Text = "Running Events:";

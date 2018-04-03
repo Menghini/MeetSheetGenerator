@@ -590,7 +590,7 @@ namespace MeetSheetGenerator
                     oPara1.Range.InsertParagraphAfter();
                     oPara1.Range.Text = "";
                     oPara1.Range.InsertParagraphAfter(); //Just an extra line :)*/
-                    setFormatRelay(oPara1); //Set the format for tabs to be a track event
+                    setFormatRelay(oPara1); //Set the format for tabs to be a relay event
                     foreach (Athlete currentAthlete in currentEvent.getAthletes((String)comboBoxSchools.SelectedItem))
                     {
                         int athletePostion = Int32.Parse(currentAthlete.getPriority().ToString().Substring(currentAthlete.getPriority().ToString().Length-1));
@@ -608,6 +608,7 @@ namespace MeetSheetGenerator
                     if (index == 0)
                     {
                         //If not, add a NO ENTRY
+                        setFormatIndividual(oPara1); //But first make sure the tabs will line up nicely. 
                         tempPrint += "\t___ NO ENTRY";
                     }
 

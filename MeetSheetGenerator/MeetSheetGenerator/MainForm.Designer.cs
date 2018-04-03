@@ -33,6 +33,8 @@
             this.labelProgress = new System.Windows.Forms.Label();
             this.progressBarFileRead = new System.Windows.Forms.ProgressBar();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.buttonSelectNone = new System.Windows.Forms.Button();
+            this.buttonSelectAll = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.checkBoxExtraSlot = new System.Windows.Forms.CheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -45,8 +47,6 @@
             this.listBoxEvents = new System.Windows.Forms.ListBox();
             this.comboBoxSchools = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.buttonSelectAll = new System.Windows.Forms.Button();
-            this.buttonSelectNone = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -59,7 +59,7 @@
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(75, 23);
             this.btnBrowse.TabIndex = 0;
-            this.btnBrowse.Text = "Open PDF";
+            this.btnBrowse.Text = "Open File";
             this.btnBrowse.UseVisualStyleBackColor = true;
             this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
             // 
@@ -109,6 +109,26 @@
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Customize";
+            // 
+            // buttonSelectNone
+            // 
+            this.buttonSelectNone.Location = new System.Drawing.Point(9, 290);
+            this.buttonSelectNone.Name = "buttonSelectNone";
+            this.buttonSelectNone.Size = new System.Drawing.Size(120, 23);
+            this.buttonSelectNone.TabIndex = 12;
+            this.buttonSelectNone.Text = "Unselect All";
+            this.buttonSelectNone.UseVisualStyleBackColor = true;
+            this.buttonSelectNone.Click += new System.EventHandler(this.buttonSelectNone_Click);
+            // 
+            // buttonSelectAll
+            // 
+            this.buttonSelectAll.Location = new System.Drawing.Point(9, 261);
+            this.buttonSelectAll.Name = "buttonSelectAll";
+            this.buttonSelectAll.Size = new System.Drawing.Size(120, 23);
+            this.buttonSelectAll.TabIndex = 11;
+            this.buttonSelectAll.Text = "Select All";
+            this.buttonSelectAll.UseVisualStyleBackColor = true;
+            this.buttonSelectAll.Click += new System.EventHandler(this.buttonSelectAll_Click);
             // 
             // groupBox4
             // 
@@ -239,26 +259,6 @@
             this.label1.Size = new System.Drawing.Size(74, 13);
             this.label1.TabIndex = 4;
             this.label1.Text = "School Name:";
-            // 
-            // buttonSelectAll
-            // 
-            this.buttonSelectAll.Location = new System.Drawing.Point(9, 261);
-            this.buttonSelectAll.Name = "buttonSelectAll";
-            this.buttonSelectAll.Size = new System.Drawing.Size(120, 23);
-            this.buttonSelectAll.TabIndex = 11;
-            this.buttonSelectAll.Text = "Select All";
-            this.buttonSelectAll.UseVisualStyleBackColor = true;
-            this.buttonSelectAll.Click += new System.EventHandler(this.buttonSelectAll_Click);
-            // 
-            // buttonSelectNone
-            // 
-            this.buttonSelectNone.Location = new System.Drawing.Point(9, 290);
-            this.buttonSelectNone.Name = "buttonSelectNone";
-            this.buttonSelectNone.Size = new System.Drawing.Size(120, 23);
-            this.buttonSelectNone.TabIndex = 12;
-            this.buttonSelectNone.Text = "Unselect All";
-            this.buttonSelectNone.UseVisualStyleBackColor = true;
-            this.buttonSelectNone.Click += new System.EventHandler(this.buttonSelectNone_Click);
             // 
             // MainForm
             // 

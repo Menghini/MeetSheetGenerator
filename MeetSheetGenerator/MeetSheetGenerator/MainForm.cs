@@ -341,8 +341,17 @@ namespace MeetSheetGenerator
                     {
                         for (int i = 2; i < values.Length; i++) //Add each event that exist.
                         {
-                            Event newEvent = new Event(values[i]);
-                            newEvent.setType("Track"); //TODO: Assume the event is a field event.
+                            String eventName = values[i]; //Get the entire event name.
+                            String eventType = null;
+                            if (eventName.Substring(0, 3).ToLower().Equals("(F)".ToLower()))
+                                eventType = "Field";
+                            else if (eventName.Substring(0, 3).ToLower().Equals("(R)".ToLower()))
+                                eventType = "Relay";
+                            else
+                                eventType = "Track"; //Assume it's a track event if it's not entered.
+                            eventName = eventName.Substring(3); //The name of the event is everything after the third character.
+                            Event newEvent = new Event(eventName);
+                            newEvent.setType(eventType);
                             events.Add(newEvent); //Add the event to the list.
 
                             //---------All Other Lines---------
@@ -355,7 +364,7 @@ namespace MeetSheetGenerator
                     }
                     
 
-                    Athlete person = new Athlete(values[0], values[1], "Your School Here");
+                    Athlete person = new Athlete(values[1], values[0], "Your School Here");
                     //Users's School is listed as it doesn't really matter since everyone will be from the same school.
 
                     for (int i=2; i<values.Length; i++) //Now we loop through each event and add each student.

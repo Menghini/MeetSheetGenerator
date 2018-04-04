@@ -329,6 +329,7 @@ namespace MeetSheetGenerator
             Boolean firstLine = true;
             using (var reader = new StreamReader(fileLocation))
             {
+                comboBoxSchools.Items.Add("Your School Here");
                 while (!reader.EndOfStream)
                 {
                     var line = reader.ReadLine();
@@ -353,17 +354,13 @@ namespace MeetSheetGenerator
                             Event newEvent = new Event(eventName);
                             newEvent.setType(eventType);
                             events.Add(newEvent); //Add the event to the list.
-
-                            //---------All Other Lines---------
-                            //All the other lines are athletes.
-                            comboBoxSchools.Items.Add("Your School Here");
-
                         }
                         firstLine = false;
                         continue;
                     }
-                    
 
+                    //---------All Other Lines---------
+                    //All the other lines are athletes.
                     Athlete person = new Athlete(values[1], values[0], "Your School Here");
                     //Users's School is listed as it doesn't really matter since everyone will be from the same school.
                     for (int i=2; i<values.Length; i++) //Now we loop through each event and add each student.
